@@ -1,0 +1,26 @@
+# Python
+.venv
+venv
+__pycache__
+.mypy_cache
+.ruff_cache
+.pytest_cache
+*.pyc
+
+# Logs/coverage
+*.log
+coverage
+.coverage*
+
+# Editors/OS
+.DS_Store
+.idea
+.vscode
+
+# Env
+.env
+.env.*
+
+# Build artifacts
+build
+dist
