@@ -14,6 +14,7 @@ class MessageJob:
     project: ResearchProject
     user_content: str
     callback_path: Optional[str] = None
+    agent_message_id: Optional[str] = None
 
 
 async def handle_message(job: MessageJob) -> None:
@@ -27,15 +28,30 @@ async def handle_message(job: MessageJob) -> None:
         "response": response_content,
         "thoughts": [thought.model_dump() for thought in thoughts],
     }
+    if job.agent_message_id:
+        payload["agentMessageId"] = job.agent_message_id
     if job.callback_path:
         await api_client.send_callback(job.callback_path, payload)
 
 
-async def enqueue_message(queue: asyncio.Queue, project: ResearchProject, user_content: str, callback_path: Optional[str] = None) -> str:
+async def enqueue_message(
+    queue: asyncio.Queue,
+    project: ResearchProject,
+    user_content: str,
+    callback_path: Optional[str] = None,
+    agent_message_id: Optional[str] = None,
+    job_id: Optional[str] = None,
+) -> str:
     """
     Enqueue a message job into the in-memory queue. Returns job id.
     """
-    job_id = f"job-{uuid.uuid4().hex[:10]}"
-    job = MessageJob(job_id=job_id, project=project, user_content=user_content, callback_path=callback_path)
+    job_id = job_id or f"job-{uuid.uuid4().hex[:10]}"
+    job = MessageJob(
+        job_id=job_id,
+        project=project,
+        user_content=user_content,
+        callback_path=callback_path,
+        agent_message_id=agent_message_id,
+    )
     await queue.put(job)
     return job_id

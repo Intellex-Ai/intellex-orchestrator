@@ -1,4 +1,5 @@
 import asyncio
+import os
 import signal
 import sys
 from pathlib import Path
@@ -9,17 +10,22 @@ if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 from app.workers.queue import QueueWorker
+from app.workers.redis_queue import RedisQueueWorker
 
 
 async def main() -> None:
-    worker = QueueWorker()
+    if os.getenv("REDIS_URL"):
+        worker = RedisQueueWorker()
+        print("Starting orchestrator worker (Redis queue)...")
+    else:
+        worker = QueueWorker()
+        print("Starting orchestrator worker (in-memory queue)...")
     loop = asyncio.get_event_loop()
 
     # Graceful shutdown
     for sig in (signal.SIGINT, signal.SIGTERM):
         loop.add_signal_handler(sig, worker.stop)
 
-    print("Starting orchestrator worker (in-memory queue)...")
     await worker.start()
 
 
