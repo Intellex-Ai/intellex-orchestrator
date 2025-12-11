@@ -25,6 +25,14 @@ Agent/LLM workers that handle research workflows, plan updates, and chat respons
 2) Run the worker against the chosen queue backend; point callbacks to `intellex-api`.
 3) Validate job schemas and result writes against Supabase policies before rollout.
 
+## Environment
+- Copy `.env.example` to `.env` and set:
+  - `API_BASE_URL` (points to the deployed API callback host)
+  - `REDIS_URL` (queue; swap to managed Redis in prod)
+  - `OPENAI_API_KEY` / `ANTHROPIC_API_KEY` (LLM)
+  - `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` if writing directly
+  - `OPENAI_MODEL`, `OPENAI_TEMPERATURE` (optional)
+
 ## Next actions
 - Choose queue runtime and define job envelope (idempotency, tracing, retry budget).
 - Port the current `app/services/orchestrator.py` + `llm.py` from `intellex-api` into workers.
