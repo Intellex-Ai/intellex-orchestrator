@@ -4,7 +4,11 @@ import signal
 import sys
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 ROOT_DIR = Path(__file__).resolve().parents[1]
+# Load local env defaults without overriding hosted env vars.
+load_dotenv(ROOT_DIR / ".env")
 # Ensure project root is on path even if script is launched from elsewhere.
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
