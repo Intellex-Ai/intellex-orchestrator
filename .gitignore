@@ -20,6 +20,17 @@ coverage
 # Env
 .env
 .env.*
+.envrc
+.npmrc
+.pypirc
+*.pem
+*.key
+*.crt
+*.cer
+*.p12
+*.pfx
+*.jks
+*.keystore
 
 # Build artifacts
 build
