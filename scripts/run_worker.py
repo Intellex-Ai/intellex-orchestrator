@@ -15,9 +15,13 @@ if str(ROOT_DIR) not in sys.path:
 
 from app.workers.queue import QueueWorker
 from app.workers.redis_queue import RedisQueueWorker
+from app.health import create_health_server
 
 
 async def main() -> None:
+    # Start health server for Railway monitoring
+    health_runner = await create_health_server()
+
     if os.getenv("REDIS_URL"):
         worker = RedisQueueWorker()
         print("Starting orchestrator worker (Redis queue)...")
@@ -27,11 +31,16 @@ async def main() -> None:
     loop = asyncio.get_event_loop()
 
     # Graceful shutdown
+    async def shutdown():
+        worker.stop()
+        await health_runner.cleanup()
+
     for sig in (signal.SIGINT, signal.SIGTERM):
-        loop.add_signal_handler(sig, worker.stop)
+        loop.add_signal_handler(sig, lambda: asyncio.create_task(shutdown()))
 
     await worker.start()
 
 
 if __name__ == "__main__":
     asyncio.run(main())
+
