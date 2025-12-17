@@ -9,6 +9,8 @@ class ApiClient:
         self.base_url = os.getenv("API_BASE_URL", "http://localhost:8000")
         self.timeout = float(os.getenv("API_TIMEOUT_SECONDS", "10"))
         self.callback_secret = os.getenv("ORCHESTRATOR_CALLBACK_SECRET")
+        if not self.callback_secret:
+            raise RuntimeError("ORCHESTRATOR_CALLBACK_SECRET is required for API callbacks")
         self._client = httpx.AsyncClient(base_url=self.base_url, timeout=self.timeout)
 
     async def send_callback(self, path: str, payload: dict[str, Any]) -> None:

@@ -28,6 +28,7 @@ Agent/LLM workers that handle research workflows, plan updates, and chat respons
 ## Environment
 - Copy `.env.example` to `.env` and set:
   - `API_BASE_URL` (points to the deployed API callback host)
+  - `ORCHESTRATOR_CALLBACK_SECRET` (required; must match API env)
   - `REDIS_URL` (queue; swap to managed Redis in prod)
   - `OPENAI_API_KEY` / `ANTHROPIC_API_KEY` (LLM)
   - `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` if writing directly
